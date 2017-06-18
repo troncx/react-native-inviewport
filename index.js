@@ -1,8 +1,10 @@
 'use strict';
 
-var React = require('react-native');
-var window = React.Dimensions.get('window');
-var {View, NativeMethodsMixin} = React;
+var React = require('react');
+var ReactNative = require('react-native');
+var window = ReactNative.Dimensions.get('window');
+var {View, NativeMethodsMixin} = ReactNative;
+
 
 module.exports = React.createClass({
   displayName: 'InViewPort',
@@ -24,9 +26,9 @@ module.exports = React.createClass({
     return {
       rectTop: 0,
       rectBottom: 0
-    }
+    };
   },
-  componentDidMount: function () {
+  onLayout: function () {
     if (this.props.active) {
       this.startWatching();
     }
@@ -37,11 +39,13 @@ module.exports = React.createClass({
   },
 
   componentWillReceiveProps: function (nextProps) {
-    if (nextProps.active) {
-      this.lastValue = null;
-      this.startWatching();
-    } else {
-      this.stopWatching();
+    if(nextProps.active != this.props.active){
+      if (nextProps.active) {
+        this.lastValue = null;
+        this.startWatching();
+      } else {
+        this.stopWatching();
+      }
     }
   },
 
@@ -63,7 +67,7 @@ module.exports = React.createClass({
         rectTop: pageY,
         rectBottom: pageY + height,
         rectWidth: pageX + width,
-      })
+      });
     });
     var isVisible = (
       this.state.rectBottom != 0 && this.state.rectTop >= 0 && this.state.rectBottom <= window.height &&
@@ -79,7 +83,7 @@ module.exports = React.createClass({
 
   render: function () {
     return (
-      <View ref='myview' {...this.props}>
+      <View ref='myview' {...this.props} onLayout={this.onLayout}>
         {this.props.children}
       </View>
     );
